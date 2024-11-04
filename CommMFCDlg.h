@@ -20,6 +20,7 @@
 #include <queue>
 #include <algorithm>
 #include <afxmt.h>
+#include <atlimage.h>
 
 
 //About CSerialPort end
@@ -109,7 +110,7 @@ public:
     static UINT ThreadProc(LPVOID pParam);
     static UINT ThreadProc2(LPVOID pParam);
 
-    bool isOpenMoniter=FALSE,isFrontbuffer=TRUE,isReadData = TRUE,isCompute_Data=FALSE,isFirstRecordData=TRUE,isFirstCompute = TRUE,isRecodData=FALSE;
+    bool isOpenMoniter=FALSE,isFrontbuffer=TRUE,isReadData = TRUE,isCompute_Data=FALSE,isFirstRecordData=TRUE,isFirstCompute = TRUE,isRecodData=FALSE,isSample= FALSE;
     Mat black_front = Mat::zeros(1000, 1000, CV_8UC1);
     Mat black_back = Mat::zeros(1000, 1000, CV_8UC1);
     Mat *draw_buffer,*display_buffer;
@@ -137,4 +138,8 @@ private:
 public:
     afx_msg void OnCbnSelchangeCombo2();
     afx_msg void OnCbnDropdownCombo2();
+    CStatic show_Sample;
+    afx_msg void OnEnChangeShowsensity();
+    void show_buffer();
+    afx_msg void OnStnClickedPic();
 };

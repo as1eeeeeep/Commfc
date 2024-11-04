@@ -1,0 +1,11 @@
+﻿  stdafx.cpp
+  CommMFC.cpp
+F:\github\Commfc\CommMFCDlg.h(31,1): warning C5208: typedef 名称中使用的未命名的类不能声明非静态数据成员、成员枚举或成员类以外的成员
+  CommMFCDlg.cpp
+F:\github\Commfc\CommMFCDlg.h(31,1): warning C5208: typedef 名称中使用的未命名的类不能声明非静态数据成员、成员枚举或成员类以外的成员
+F:\github\Commfc\CommMFCDlg.cpp(406,85): warning C4244: “参数”: 从“double”转换到“std::array<scanpoint,1587>::size_type”，可能丢失数据
+F:\github\Commfc\CommMFCDlg.cpp(409,85): warning C4244: “参数”: 从“double”转换到“std::array<scanpoint,1587>::size_type”，可能丢失数据
+F:\github\Commfc\CommMFCDlg.cpp(420,82): warning C4101: “e”: 未引用的局部变量
+F:\github\Commfc\CommMFCDlg.cpp(522,90): warning C4101: “e”: 未引用的局部变量
+  正在生成代码...
+  CommMFC.vcxproj -> F:\github\Commfc\x64\Debug\CommMFC.exe

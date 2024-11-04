@@ -72,6 +72,8 @@ void CCommMFCDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_ShowSensity, m_ShowSensity);
     DDX_Control(pDX, IDC_LaserType, m_LaserType);
     DDX_Control(pDX, IDC_COMBO2, port_number);
+    //DDX_Control(pDX, IDC_Sample, Sample);
+    DDX_Control(pDX, IDC_show_Sample, show_Sample);
 }
 
 BEGIN_MESSAGE_MAP(CCommMFCDlg, CDialog)
@@ -90,6 +92,9 @@ BEGIN_MESSAGE_MAP(CCommMFCDlg, CDialog)
 ON_CBN_SELCHANGE(IDC_COMBO2, &CCommMFCDlg::OnCbnSelchangeCombo2)
 //ON_CBN_DROPDOWN(IDC_COMBO2, &CCommMFCDlg::OnCbnDropdownCombo2)
 ON_CBN_DROPDOWN(IDC_COMBO2, &CCommMFCDlg::OnCbnDropdownCombo2)
+ON_EN_CHANGE(IDC_ShowSensity, &CCommMFCDlg::OnEnChangeShowsensity)
+//ON_STN_CLICKED(IDC_Sample, &CCommMFCDlg::OnStnClickedSample)
+ON_STN_CLICKED(IDC_PIC, &CCommMFCDlg::OnStnClickedPic)
 END_MESSAGE_MAP()
 
 
@@ -524,6 +529,11 @@ void CCommMFCDlg::DoWork()
                                                         {
                                                             isCompute_Data = TRUE;
                                                             isRecodData = FALSE;
+                                                            if (isSample) 
+                                                            { 
+                                                                imwrite("sample_buffer.png", *draw_buffer);   
+                                                            }
+                                                            isSample = FALSE;
                                                             save_point_num = 0;
                                                         }
 
@@ -791,6 +801,7 @@ void CCommMFCDlg::ComputeData()
 
 void CCommMFCDlg::OnBnClickedOpenmoniter()
 {    
+    show_buffer();
     if (!isOpenMoniter)
     {
         OpenMoniterCtrl.SetWindowText(_T("关闭监控")); 
@@ -814,7 +825,7 @@ void CCommMFCDlg::OnBnClickedOpenmoniter()
             break;
         }
     }
-    cv::destroyAllWindows();
+    //cv::destroyAllWindows();
     // TODO: 在此添加控件通知处理程序代码
  
 }
@@ -934,6 +945,7 @@ void CCommMFCDlg::OnBnClickedReset()
     // TODO: 在此添加控件通知处理程序代码
     isFirstRecordData = TRUE;
     isFirstCompute = TRUE;
+    isSample = TRUE;
 }
 
 void CCommMFCDlg::OnNMCustomdrawSensity(NMHDR *pNMHDR, LRESULT *pResult)
@@ -1022,4 +1034,35 @@ void CCommMFCDlg::OnCbnDropdownCombo2()
     //恢复实际dc
     dc.RestoreDC(nSaveDC);
   
+}
+
+
+void CCommMFCDlg::OnEnChangeShowsensity()
+{
+    // TODO:  如果该控件是 RICHEDIT 控件，它将不
+    // 发送此通知，除非重写 CDialog::OnInitDialog()
+    // 函数并调用 CRichEditCtrl().SetEventMask()，
+    // 同时将 ENM_CHANGE 标志“或”运算到掩码中。
+
+    // TODO:  在此添加控件通知处理程序代码
+}
+
+
+void CCommMFCDlg::show_buffer()
+{
+    // TODO: 在此处添加实现代码.
+    CImage sample_image;
+    sample_image.Load(TEXT("sample_buffer.png"));
+    CRect rectControl;
+    show_Sample.GetClientRect(rectControl);
+    CDC* pDC = show_Sample.GetDC();
+    sample_image.Draw(pDC->m_hDC, rectControl);
+    sample_image.Destroy();
+    show_Sample.ReleaseDC(pDC);
+}
+
+
+void CCommMFCDlg::OnStnClickedPic()
+{
+    // TODO: 在此添加控件通知处理程序代码
 }
