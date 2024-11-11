@@ -1,11 +1,47 @@
-﻿  stdafx.cpp
-  CommMFC.cpp
-F:\github\Commfc\CommMFCDlg.h(31,1): warning C5208: typedef 名称中使用的未命名的类不能声明非静态数据成员、成员枚举或成员类以外的成员
+﻿  CommMFC.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+F:\github\Commfc\CommMFCDlg.h(34,22): error C2039: "filesystem": 不是 "std" 的成员
   CommMFCDlg.cpp
-F:\github\Commfc\CommMFCDlg.h(31,1): warning C5208: typedef 名称中使用的未命名的类不能声明非静态数据成员、成员枚举或成员类以外的成员
-F:\github\Commfc\CommMFCDlg.cpp(406,85): warning C4244: “参数”: 从“double”转换到“std::array<scanpoint,1587>::size_type”，可能丢失数据
-F:\github\Commfc\CommMFCDlg.cpp(409,85): warning C4244: “参数”: 从“double”转换到“std::array<scanpoint,1587>::size_type”，可能丢失数据
-F:\github\Commfc\CommMFCDlg.cpp(420,82): warning C4101: “e”: 未引用的局部变量
-F:\github\Commfc\CommMFCDlg.cpp(522,90): warning C4101: “e”: 未引用的局部变量
+F:\github\Commfc\CommMFCDlg.h(34,22): error C2871: “filesystem”: 具有该名称的命名空间不存在
+F:\github\Commfc\CommMFCDlg.h(35,21): error C2039: "filesystem": 不是 "std" 的成员
+F:\github\Commfc\CommMFCDlg.h(35,21): error C2878: “filesystem”: 该名称的命名空间或类不存在
+F:\github\Commfc\CommMFCDlg.h(38,1): warning C5208: typedef 名称中使用的未命名的类不能声明非静态数据成员、成员枚举或成员类以外的成员
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.40.33807\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+F:\github\Commfc\CommMFCDlg.h(34,22): error C2039: "filesystem": 不是 "std" 的成员
+F:\github\Commfc\CommMFCDlg.h(34,22): error C2871: “filesystem”: 具有该名称的命名空间不存在
+F:\github\Commfc\CommMFCDlg.h(35,21): error C2039: "filesystem": 不是 "std" 的成员
+F:\github\Commfc\CommMFCDlg.h(35,21): error C2878: “filesystem”: 该名称的命名空间或类不存在
+F:\github\Commfc\CommMFCDlg.h(38,1): warning C5208: typedef 名称中使用的未命名的类不能声明非静态数据成员、成员枚举或成员类以外的成员
+F:\github\Commfc\CommMFCDlg.cpp(425,85): warning C4244: “参数”: 从“double”转换到“std::array<scanpoint,1587>::size_type”，可能丢失数据
+F:\github\Commfc\CommMFCDlg.cpp(428,85): warning C4244: “参数”: 从“double”转换到“std::array<scanpoint,1587>::size_type”，可能丢失数据
+F:\github\Commfc\CommMFCDlg.cpp(760,33): error C2653: “fs”: 不是类或命名空间名称
+F:\github\Commfc\CommMFCDlg.cpp(760,37): error C2065: “path”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(760,42): error C2146: 语法错误: 缺少“;”(在标识符“filePath”的前面)
+F:\github\Commfc\CommMFCDlg.cpp(760,42): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(764,38): error C2653: “fs”: 不是类或命名空间名称
+F:\github\Commfc\CommMFCDlg.cpp(764,49): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(764,42): error C3861: “exists”: 找不到标识符
+F:\github\Commfc\CommMFCDlg.cpp(765,50): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(768,50): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(839,33): error C2653: “fs”: 不是类或命名空间名称
+F:\github\Commfc\CommMFCDlg.cpp(839,37): error C2065: “path”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(839,42): error C2146: 语法错误: 缺少“;”(在标识符“filePath”的前面)
+F:\github\Commfc\CommMFCDlg.cpp(839,42): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(843,38): error C2653: “fs”: 不是类或命名空间名称
+F:\github\Commfc\CommMFCDlg.cpp(843,49): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(843,42): error C3861: “exists”: 找不到标识符
+F:\github\Commfc\CommMFCDlg.cpp(844,50): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(847,50): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(772,59): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\github\Commfc\CommMFCDlg.cpp(851,59): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+F:\github\Commfc\CommMFCDlg.cpp(1103,5): error C2653: “fs”: 不是类或命名空间名称
+F:\github\Commfc\CommMFCDlg.cpp(1103,9): error C2065: “path”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(1103,14): error C2146: 语法错误: 缺少“;”(在标识符“filePath”的前面)
+F:\github\Commfc\CommMFCDlg.cpp(1103,14): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(1107,10): error C2653: “fs”: 不是类或命名空间名称
+F:\github\Commfc\CommMFCDlg.cpp(1107,21): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(1107,14): error C3861: “exists”: 找不到标识符
+F:\github\Commfc\CommMFCDlg.cpp(1108,22): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(1111,22): error C2065: “filePath”: 未声明的标识符
+F:\github\Commfc\CommMFCDlg.cpp(1115,31): warning C4996: 'localtime': This function or variable may be unsafe. Consider using localtime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
   正在生成代码...
-  CommMFC.vcxproj -> F:\github\Commfc\x64\Debug\CommMFC.exe

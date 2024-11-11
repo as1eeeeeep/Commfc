@@ -74,6 +74,7 @@ void CCommMFCDlg::DoDataExchange(CDataExchange* pDX)
     DDX_Control(pDX, IDC_COMBO2, port_number);
     //DDX_Control(pDX, IDC_Sample, Sample);
     DDX_Control(pDX, IDC_show_Sample, show_Sample);
+    DDX_Control(pDX, IDC_ReSet, reset_button);
 }
 
 BEGIN_MESSAGE_MAP(CCommMFCDlg, CDialog)
@@ -294,7 +295,7 @@ unsigned char CCommMFCDlg::asciiToHex1(char byte)
 *   双缓存技术显示图像
 *   后端绘制更新
 */
-void CCommMFCDlg::UpdateRadarData(const scanpoint &point, cv::Mat* &buffer)
+void CCommMFCDlg::UpdateRadarData(const scanpoint& point, cv::Mat*& buffer)
 {
     // 计算激光点在图像上的位置
     int factor = 100;
@@ -302,8 +303,26 @@ void CCommMFCDlg::UpdateRadarData(const scanpoint &point, cv::Mat* &buffer)
     int y = (int)(500 - factor * (point.range * cos(point.theta * 3.14 / 180)));
 
     // 绘制激光点
-    cv::circle(*buffer, cv::Point(x, y), 2, cv::Scalar(255), -1);
+
+    if (isFirstRecordData) 
+    {
+        cv::circle(*buffer, cv::Point(x, y), 2, cv::Scalar(255, 255, 255), -1);
+    }
+    else
+    {
+        double error = 0.0;
+        error = std::pow(comparison[point.theta] - point.range, 2);
+        if(error > 1)
+        {
+            cv::circle(*buffer, cv::Point(x, y), 2, cv::Scalar(0, 0, 255), -1);
+        }
+        else
+        {
+            cv::circle(*buffer, cv::Point(x, y), 2, cv::Scalar(255, 255, 255), -1);
+        }
+    }
 }
+
 
 /*
 *   双缓存技术显示图像
@@ -427,6 +446,11 @@ void CCommMFCDlg::DoWork()
                                                 {
                                                     isCompute_Data = TRUE;
                                                     isRecodData = FALSE;
+                                                    if (isSample)
+                                                    {
+                                                        imwrite("sample_buffer.png", *draw_buffer);
+                                                    }
+                                                    isSample = FALSE;
                                                     save_point_num = 0;
                                                 }
 
@@ -507,6 +531,7 @@ void CCommMFCDlg::DoWork()
                                                                 range /= 1000;
                                                                 laser_point_current.range = range;
                                                                 laser_point_current.theta = start_angle + (double)(((i - 4) / 2) * M10_P_delta_angle);
+                                                                
                                                             }
 
                                                             if (isRecodData)
@@ -518,6 +543,7 @@ void CCommMFCDlg::DoWork()
                                                             try
                                                             {
                                                                 UpdateRadarData(laser_point_current, draw_buffer);
+                                                                
                                                             }
                                                             catch (const std::exception &e)
                                                             {
@@ -531,9 +557,9 @@ void CCommMFCDlg::DoWork()
                                                             isRecodData = FALSE;
                                                             if (isSample) 
                                                             { 
-                                                                imwrite("sample_buffer.png", *draw_buffer);   
+                                                                imwrite("sample_buffer.png", *draw_buffer);
                                                             }
-                                                            isSample = FALSE;
+                                                            isSample = FALSE; 
                                                             save_point_num = 0;
                                                         }
 
@@ -599,10 +625,10 @@ void CCommMFCDlg::OnClose()
         hSerial = INVALID_HANDLE_VALUE;
     }
     CDialog::OnClose();
-    /*delete draw_buffer;
-    draw_buffer = nullptr;
-    delete display_buffer;
-    display_buffer = nullptr;*/
+    //delete draw_buffer;
+    //draw_buffer = nullptr;
+    //delete display_buffer;
+    //display_buffer = nullptr;
 }
 
 void CCommMFCDlg::OnCbnSelchangeComboBaudrate()
@@ -729,11 +755,39 @@ void CCommMFCDlg::ComputeData()
                         {
                             ModifyRichEditRed();
                             m_WarningEdit.SetWindowText(notSafety);
+                            if (isInvade) {
+                                isInvade = FALSE;
+                                fs::path filePath = "log.txt";
+                                std::ofstream logFile; 
+
+                                // 检查文件是否存在
+                                if (!fs::exists(filePath)) {// 文件不存在，创建新文件并以写入模式打开
+                                    logFile.open(filePath); // 在这里初始化logFile
+                                }
+                                else {// 文件存在，以追加模式打开文件
+                                    logFile.open(filePath, std::ios_base::app); // 在这里初始化logFile
+                                }
+                                // 获取当前时间
+                                std::time_t currentTime = std::time(nullptr);
+                                std::tm* localTime = std::localtime(&currentTime);
+
+                                // 将时间格式化为字符串，精确到秒
+                                std::ostringstream oss;
+                                oss << std::put_time(localTime, "%Y-%m-%d %H:%M:%S");
+                                std::string currentTimeStr = oss.str();
+
+                                // 写入时间到文件（在追加模式下，这会自动在新的一行开始）
+                                logFile << currentTimeStr << " 检测到入侵\n";
+
+                                // 关闭文件
+                                logFile.close();
+                            }
                         }
                         else
                         {
                             ModifyRichEditGreen();
                             m_WarningEdit.SetWindowText(isSafety);
+                            isInvade = TRUE;
                         }
                     }
                     criticalSection.Unlock();
@@ -752,6 +806,7 @@ void CCommMFCDlg::ComputeData()
                         while (count--)
                         {
                             Environment_array[count] = WriteData_array[count];
+                            comparison[WriteData_array[count].theta] = WriteData_array[count].range;
                         }
                         count = 1587;
                     }
@@ -779,11 +834,40 @@ void CCommMFCDlg::ComputeData()
                         {
                             ModifyRichEditRed();
                             m_WarningEdit.SetWindowText(notSafety);
+                            if (isInvade) {
+                                isInvade = FALSE;
+                                fs::path filePath = "log.txt";
+                                std::ofstream logFile;
+
+                                // 检查文件是否存在
+                                if (!fs::exists(filePath)) {// 文件不存在，创建新文件并以写入模式打开
+                                    logFile.open(filePath); // 在这里初始化logFile
+                                }
+                                else {// 文件存在，以追加模式打开文件
+                                    logFile.open(filePath, std::ios_base::app); // 在这里初始化logFile
+                                }
+                                // 获取当前时间
+                                std::time_t currentTime = std::time(nullptr);
+                                std::tm* localTime = std::localtime(&currentTime);
+
+                                // 将时间格式化为字符串，精确到秒
+                                std::ostringstream oss;
+                                oss << std::put_time(localTime, "%Y-%m-%d %H:%M:%S");
+                                std::string currentTimeStr = oss.str();
+
+                                // 写入时间到文件（在追加模式下，这会自动在新的一行开始）
+                                logFile << currentTimeStr << " 检测到入侵\n";
+
+                                // 关闭文件
+                                logFile.close();
+                            }
+
                         }
                         else
                         {
                             ModifyRichEditGreen();
                             m_WarningEdit.SetWindowText(isSafety);
+                            isInvade = TRUE;
                         }
                     }
                     criticalSection.Unlock();
@@ -801,7 +885,7 @@ void CCommMFCDlg::ComputeData()
 
 void CCommMFCDlg::OnBnClickedOpenmoniter()
 {    
-    show_buffer();
+
     if (!isOpenMoniter)
     {
         OpenMoniterCtrl.SetWindowText(_T("关闭监控")); 
@@ -811,7 +895,7 @@ void CCommMFCDlg::OnBnClickedOpenmoniter()
 	{
         OpenMoniterCtrl.SetWindowText(_T("打开监控"));
         isOpenMoniter = FALSE;
-        imshow("picView", Mat::zeros(1000, 1000, CV_8UC1));
+        imshow("picView", Mat::zeros(1000, 1000, CV_8UC3));
         int key = waitKey(50);
     }
 
@@ -886,7 +970,7 @@ void CCommMFCDlg::OnBnClickedOpenthread()
     OpenMoniterCtrl.EnableWindow(1);
 }
 
-void  CCommMFCDlg::get_port_number(std::vector<wstring>& PortNumber)
+void  CCommMFCDlg::get_port_number(std::vector<wstring>& PortNumber)//获取串口号函数，将有被占用的串口放进一个vector中，被下拉栏控件所使用
 {
     HDEVINFO hDevInfo = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
     SP_CLASSIMAGELIST_DATA _spImageData = { 0 };
@@ -943,9 +1027,18 @@ void  CCommMFCDlg::get_port_number(std::vector<wstring>& PortNumber)
 void CCommMFCDlg::OnBnClickedReset()
 {
     // TODO: 在此添加控件通知处理程序代码
+    isSample = TRUE;
     isFirstRecordData = TRUE;
     isFirstCompute = TRUE;
-    isSample = TRUE;
+    Sleep(100);
+    show_buffer();
+    CString buttonText;
+    reset_button.GetWindowTextW(buttonText);
+
+    if (buttonText == _T("显示基准图像"))
+    {
+        reset_button.SetWindowTextW(_T("重置基准图像"));
+    }
 }
 
 void CCommMFCDlg::OnNMCustomdrawSensity(NMHDR *pNMHDR, LRESULT *pResult)
@@ -997,6 +1090,7 @@ void CCommMFCDlg::OnCbnSelchangeCombo2()
     int startIndex = length - 5; // 倒数第五个字符的索引  
     int endIndex = length - 2;   // 倒数第二个字符的索引（包含）
     CString Portnumber = SelectedPort.Mid(startIndex, 4);
+    //CString log = Portnumber;
     Portnumber.Format(_T("\\\\.\\%s"), (LPCTSTR)Portnumber);
     hSerial = CreateFile(Portnumber,
     GENERIC_READ | GENERIC_WRITE,
@@ -1005,6 +1099,35 @@ void CCommMFCDlg::OnCbnSelchangeCombo2()
     OPEN_EXISTING,
     0, // 文件属性  
     nullptr); // 模板文件 
+
+    fs::path filePath = "log.txt";
+    std::ofstream logFile;
+
+    // 检查文件是否存在
+    if (!fs::exists(filePath)) {// 文件不存在，创建新文件并以写入模式打开
+        logFile.open(filePath); // 在这里初始化logFile
+    }
+    else {// 文件存在，以追加模式打开文件
+        logFile.open(filePath, std::ios_base::app); // 在这里初始化logFile
+    }
+    // 获取当前时间
+    std::time_t currentTime = std::time(nullptr);
+    std::tm* localTime = std::localtime(&currentTime);
+
+    // 将时间格式化为字符串，精确到秒
+    std::ostringstream oss;
+    oss << std::put_time(localTime, "%Y-%m-%d %H:%M:%S");
+    std::string currentTimeStr = oss.str();
+
+    std::string log;
+    for (int i = 0; i < SelectedPort.GetLength(); i++) {
+        log += static_cast<char>(SelectedPort.GetAt(i));
+    }
+
+    logFile << currentTimeStr << " 打开串口" << log<<"\n";
+
+    // 关闭文件
+    logFile.close();
 }
 
 
@@ -1048,17 +1171,63 @@ void CCommMFCDlg::OnEnChangeShowsensity()
 }
 
 
+//void CCommMFCDlg::show_buffer()
+//{
+//    // TODO: 在此处添加实现代码.
+//    CImage sample_image;
+//    sample_image.Load(TEXT("sample_buffer.png"));
+//    CRect rectControl;
+//    show_Sample.GetClientRect(rectControl);
+//    CDC* pDC = show_Sample.GetDC();
+//    sample_image.Draw(pDC->m_hDC, rectControl);
+//    sample_image.Destroy();
+//    show_Sample.ReleaseDC(pDC);
+//}
+
 void CCommMFCDlg::show_buffer()
 {
-    // TODO: 在此处添加实现代码.
+    // 加载图片
     CImage sample_image;
-    sample_image.Load(TEXT("sample_buffer.png"));
+    HRESULT hr = sample_image.Load(TEXT("sample_buffer.png"));
+    if (FAILED(hr))
+    {
+        // 处理加载失败的情况
+        AfxMessageBox(TEXT("Failed to load image!"));
+        return;
+    }
+
+    // 获取静态控件的客户区矩形
     CRect rectControl;
     show_Sample.GetClientRect(rectControl);
+
+    // 计算缩放后的图片尺寸
+    int newWidth = static_cast<int>(sample_image.GetWidth() * 0.35);
+    int newHeight = static_cast<int>(sample_image.GetHeight() * 0.35);
+
+    // 创建一个兼容的DC和位图来保存缩放后的图片
+    CDC dcMem;
+    dcMem.CreateCompatibleDC(NULL);
+    CBitmap bitmap;
+    bitmap.CreateCompatibleBitmap(show_Sample.GetDC(), newWidth, newHeight);
+    CBitmap* pOldBitmap = dcMem.SelectObject(&bitmap);
+
+    // 设置缩放后的DC的绘制区域为整个位图
+    dcMem.SetStretchBltMode(HALFTONE); 
+    dcMem.FillSolidRect(0, 0, newWidth, newHeight, RGB(0, 0, 0)); // 用黑色填充背景
+
+    // 将原始图片缩放到新的尺寸并绘制到位图上
+    sample_image.StretchBlt(dcMem, 0, 0, newWidth, newHeight, SRCCOPY);
+
+    // 获取静态控件的DC
     CDC* pDC = show_Sample.GetDC();
-    sample_image.Draw(pDC->m_hDC, rectControl);
-    sample_image.Destroy();
+
+    pDC->BitBlt(0, 0, newWidth, newHeight, &dcMem, 0, 0, SRCCOPY);
+
     show_Sample.ReleaseDC(pDC);
+    dcMem.SelectObject(pOldBitmap);
+    bitmap.DeleteObject();
+    dcMem.DeleteDC();
+    sample_image.Destroy();
 }
 
 

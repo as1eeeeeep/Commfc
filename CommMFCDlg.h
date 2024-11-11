@@ -4,11 +4,15 @@
 #pragma once
 
 #include <string>
+#include <vector>
+#include <map>
 #include <stdlib.h>
 #include <locale.h>
 #include <Windows.h>
 #include <SetupAPI.h>
-#include <vector>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
 
 
 //About CSerialPort start
@@ -21,11 +25,14 @@
 #include <algorithm>
 #include <afxmt.h>
 #include <atlimage.h>
+#include <filesystem>
 
 
 //About CSerialPort end
 using namespace std;
 using namespace cv;
+using namespace std::filesystem;
+namespace fs = std::filesystem;
 
 typedef struct
 {
@@ -110,9 +117,11 @@ public:
     static UINT ThreadProc(LPVOID pParam);
     static UINT ThreadProc2(LPVOID pParam);
 
-    bool isOpenMoniter=FALSE,isFrontbuffer=TRUE,isReadData = TRUE,isCompute_Data=FALSE,isFirstRecordData=TRUE,isFirstCompute = TRUE,isRecodData=FALSE,isSample= FALSE;
-    Mat black_front = Mat::zeros(1000, 1000, CV_8UC1);
-    Mat black_back = Mat::zeros(1000, 1000, CV_8UC1);
+    bool isOpenMoniter=FALSE,isFrontbuffer=TRUE,isReadData = TRUE,isCompute_Data=FALSE,isFirstRecordData=TRUE,\
+        isFirstCompute = TRUE,isRecodData= FALSE,isSample= FALSE,isInvade= TRUE;
+
+    Mat black_front = Mat::zeros(1000, 1000, CV_8UC3);
+    Mat black_back = Mat::zeros(1000, 1000, CV_8UC3);
     Mat *draw_buffer,*display_buffer;
     Lidar Lidar_Type = M10_P;
 
@@ -121,6 +130,7 @@ public:
     scanpoint laser_point_current, laser_point_last;
 
     array<scanpoint,1587> WriteData_array, ComputeData_array, Environment_array;
+    map<double, double> comparison;
 
     CCriticalSection criticalSection;
 
@@ -142,4 +152,5 @@ public:
     afx_msg void OnEnChangeShowsensity();
     void show_buffer();
     afx_msg void OnStnClickedPic();
+    CButton reset_button;
 };
